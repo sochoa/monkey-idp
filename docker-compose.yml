@@ -10,6 +10,12 @@ services:
     - ./nginx:/etc/nginx
     - ./static:/usr/share/nginx/html:ro
     command: [nginx-debug, '-g', 'daemon off;']
-#  database:
-#  api:
-#  ui:
+  db:
+    image: postgres:13-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: "1UABC/jNtmTsbXqe"
+  api:
+    build: ./docker/api.Dockerfile
+  ui:
+    build: ./docker/ui.Dockerfile
