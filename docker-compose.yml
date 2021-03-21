@@ -1,0 +1,16 @@
+---
+version: "3.8"
+services:
+  static:
+    image: nginx:1.19
+    ports:
+    - "8080:80"
+    volumes:
+    # - nginx:/etc/nginx
+    - static:/usr/share/nginx/html:ro
+    command: [nginx-debug, '-g', 'daemon off;']
+    environment:
+    - NGINX_ENTRYPOINT_QUIET_LOGS=1
+#  database:
+#  api:
+#  ui:
