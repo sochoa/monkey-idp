@@ -16,6 +16,10 @@ services:
     environment:
       POSTGRES_PASSWORD: "1UABC/jNtmTsbXqe"
   api:
-    build: ./docker/api.Dockerfile
+    build:
+      context: .
+      dockerfile: ./docker/api.Dockerfile
   ui:
-    build: ./docker/ui.Dockerfile
+    build:
+      context: .
+      dockerfile: ./docker/ui.Dockerfile
