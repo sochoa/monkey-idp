@@ -15,11 +15,15 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: "1UABC/jNtmTsbXqe"
+    container_name: homeowner_db
   api:
     build:
       context: .
       dockerfile: ./docker/api.Dockerfile
+    container_name: homeowner_api
+
   ui:
     build:
       context: .
       dockerfile: ./docker/ui.Dockerfile
+    container_name: homeowner_ui

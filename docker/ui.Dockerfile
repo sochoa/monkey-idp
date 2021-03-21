@@ -1,7 +1,7 @@
 FROM node:14
-RUN mkdir -p /src
-WORKDIR /src
-COPY ui/package.json ./
+RUN mkdir -p /ui
+WORKDIR /ui
+COPY ui/ /ui
 RUN npm install
 EXPOSE 8080
-CMD [ "node", "server.js" ]
+CMD [ "node", "src/server.js" ]

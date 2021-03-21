@@ -126,6 +126,7 @@ dist/
 # Temporary folders
 tmp/
 temp/
+build
 
 ### react ###
 .DS_*
