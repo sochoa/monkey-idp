@@ -15,18 +15,30 @@ services:
     network_mode: host
     image: postgres:13-alpine
     restart: always
+    volumes:
+    - ./pg_data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: "1UABC/jNtmTsbXqe"
+      POSTGRES_USER: "idp_user"
+      POSTGRES_DB: "idp"
     container_name: idp_db
 
   api:
     network_mode: host
-    image: idp_api
+    image: golang:latest
     container_name: idp_api
+    volumes:
+    - ./api:/src
+    command: go run main.go
+    working_dir: /src
+    environment:
+      POSTGRES_PASSWORD: "1UABC/jNtmTsbXqe"
+      POSTGRES_USER: "idp_user"
+      POSTGRES_DB: "idp"
+      HOST: "127.0.0.1"
+      PORT: "9090"
 
   ui:
     network_mode: host
     image: idp_ui
-    ports:
-    - "9090:3000"
     container_name: idp_ui
