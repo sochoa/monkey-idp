@@ -16,16 +16,13 @@ services:
     environment:
       POSTGRES_PASSWORD: "1UABC/jNtmTsbXqe"
     container_name: idp_db
+
   api:
-    build:
-      context: .
-      dockerfile: ./docker/api.Dockerfile
+    image: idp_api
     container_name: idp_api
 
   ui:
-    build:
-      context: .
-      dockerfile: ./docker/ui.Dockerfile
+    image: idp_ui
     ports:
     - "9090:3000"
     container_name: idp_ui
