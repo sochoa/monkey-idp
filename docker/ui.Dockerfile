@@ -4,4 +4,4 @@ WORKDIR /ui
 COPY ui/ /ui
 RUN npm install
 EXPOSE 8080
-CMD [ "node", "src/server.js" ]
+CMD [ "yarn", "start" ]

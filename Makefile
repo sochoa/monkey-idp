@@ -10,9 +10,15 @@ ui-image:
 	docker build -t $(UI_IMAGE) -f ./docker/ui.Dockerfile .
 
 api-exec:
-	docker run -it -v $(PWD)/api:/src -w /src $(API_IMAGE) bash
+	docker run --rm --network=host -it -v $(PWD)/api:/src -w /src $(API_IMAGE) bash
 
 ui-exec:
-	docker run -it -v $(PWD)/ui:/src -w /src $(UI_IMAGE) bash
+	docker run --rm --network=host -it -v $(PWD)/ui:/src -w /src $(UI_IMAGE) bash
+
+ui-run:
+	docker run --rm --network=host -it -v $(PWD)/ui:/src -w /src $(UI_IMAGE)
 
 build: api-image ui-image
+
+run:
+	docker-compose up
