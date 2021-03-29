@@ -2,7 +2,7 @@
 version: "3.0"
 services:
   static:
-    container_name: homeowner_static
+    container_name: idp_static
     image: nginx:1.19
     ports:
     - "8080:80"
@@ -15,15 +15,17 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: "1UABC/jNtmTsbXqe"
-    container_name: homeowner_db
+    container_name: idp_db
   api:
     build:
       context: .
       dockerfile: ./docker/api.Dockerfile
-    container_name: homeowner_api
+    container_name: idp_api
 
   ui:
     build:
       context: .
       dockerfile: ./docker/ui.Dockerfile
-    container_name: homeowner_ui
+    ports:
+    - "9090:3000"
+    container_name: idp_ui
