@@ -2,15 +2,17 @@
 version: "3.0"
 services:
   static:
+    network_mode: host
     container_name: idp_static
-    image: nginx:1.19
-    ports:
-    - "8080:80"
+    image: nginx:1.19.8-alpine
     volumes:
-    - ./nginx:/etc/nginx
+    - ./nginx:/etc/nginx:ro
     - ./static:/usr/share/nginx/html:ro
-    command: [nginx-debug, '-g', 'daemon off;']
+    - ./logs/nginx:/var/log/nginx:rw
+    command: [nginx]
+
   db:
+    network_mode: host
     image: postgres:13-alpine
     restart: always
     environment:
@@ -18,10 +20,12 @@ services:
     container_name: idp_db
 
   api:
+    network_mode: host
     image: idp_api
     container_name: idp_api
 
   ui:
+    network_mode: host
     image: idp_ui
     ports:
     - "9090:3000"
