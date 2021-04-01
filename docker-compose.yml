@@ -42,3 +42,5 @@ services:
     network_mode: host
     image: idp_ui
     container_name: idp_ui
+    volumes:
+    - ./ui:/ui
