@@ -10,5 +10,4 @@ const NewAccount = () => {
   )
 }
 
-export default SignIn
-
+export default NewAccount

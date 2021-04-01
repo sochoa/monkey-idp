@@ -1,10 +1,11 @@
 import Header from './components/Header.js'
+import RequestRouter from './components/RequestRouter.js'
 
 function App() {
   return (
     <div className='container'>
-      <Header />
-      <p>Hello, IDP</p>
+      <RequestRouter />
+      <Header routes="{RequestRouter.AvailableRoutes}"/>
     </div>
   );
 }
