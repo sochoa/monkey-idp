@@ -7,11 +7,23 @@ import {
   Route
 } from 'react-router-dom'
 
+import Home from './Home.js'
+import NewAccount from './NewAccount.js'
+import SignIn from './SignIn.js'
+
 const RequestRouter = ({ routes }) => {
   return (
     <Router>
       <Switch>
-        {routes.map(route => <Route exact key={route.key} path={`${route.path}`}></Route>)}
+        <Route exact path="/">
+          <Home />
+        </Route>
+        <Route exact path="/sign-in">
+          <SignIn />
+        </Route>
+        <Route exact path="/new-account">
+          <NewAccount />
+        </Route>
       </Switch>
     </Router>
   )
