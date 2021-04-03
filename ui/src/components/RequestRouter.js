@@ -1,10 +1,10 @@
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
-} from "react-router-dom";
+  Route
+} from 'react-router-dom'
 
-const RequestRouter = ({routes}) => {
+const RequestRouter = ({ routes }) => {
   return (
     <Router>
       <Switch>

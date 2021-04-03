@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 
 import { Navbar, Nav } from 'react-bootstrap'
 
-const Header = ({routes, title}) => {
+const Header = ({ routes, title }) => {
   return (
     <div>
       <div className="row">
@@ -24,12 +24,12 @@ const Header = ({routes, title}) => {
 
 Header.defaultProps = {
   title: 'Monkey IDP',
-  routes: [],
+  routes: []
 }
 
 Header.propTypes = {
   title: PropTypes.string,
-  routes: PropTypes.array,
+  routes: PropTypes.array
 }
 
 export default Header
