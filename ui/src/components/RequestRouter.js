@@ -1,3 +1,6 @@
+import React from 'react'
+import PropTypes from 'prop-types'
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -12,6 +15,14 @@ const RequestRouter = ({ routes }) => {
       </Switch>
     </Router>
   )
+}
+
+RequestRouter.defaultProps = {
+  routes: []
+}
+
+RequestRouter.propTypes = {
+  routes: PropTypes.array
 }
 
 export default RequestRouter

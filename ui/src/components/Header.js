@@ -1,5 +1,5 @@
+import React from 'react'
 import PropTypes from 'prop-types'
-
 import { Navbar, Nav } from 'react-bootstrap'
 
 const Header = ({ routes, title }) => {
@@ -11,7 +11,7 @@ const Header = ({ routes, title }) => {
             <Navbar.Brand href="/">{title}</Navbar.Brand>
             <Nav className="ml-auto">
               {routes.map((route) => (
-                <Nav.Link href={`${route.path}`}>{route.label}</Nav.Link>
+                <Nav.Link key={`${route.key}`} href={`${route.path}`}>{route.label}</Nav.Link>
               ))}
             </Nav>
           </Navbar>
