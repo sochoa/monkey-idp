@@ -25,25 +25,23 @@ class SignIn extends React.Component {
         <div className="row">
           <div className="col-md-12">
             <Form>
-              <Form.Group as={Row} controlId="signInFormUserId">
-                <Form.Label column sm="2" style={{ textAlign: 'right' }}>User ID</Form.Label>
-                <Col sm="5">
-                  <Form.Control type="text" placeholder="Your Email" />
-                </Col>
-              </Form.Group>
-              <Form.Group as={Row} controlId="signInFormPassword">
-                <Form.Label column sm="2" style={{ textAlign: 'right' }}>Password</Form.Label>
-                <Col sm="5">
-                  <Form.Control type="password" placeholder="Your Password" />
-                </Col>
-              </Form.Group>
               <Form.Row>
-                <Col sm={{ span: 5, offset: 2 }}>
-                  <Button variant="primary" type="submit">
-                    Submit
-                  </Button>
-                </Col>
+                <Form.Group as={Col} controlId="formUserId" column lg="5">
+                  <Form.Label>User ID</Form.Label>
+                  <Form.Control type="text" placeholder="Enter User ID" />
+                </Form.Group>
               </Form.Row>
+
+              <Form.Row>
+                <Form.Group as={Col} controlId="formPassword" column lg="5">
+                  <Form.Label>Password</Form.Label>
+                  <Form.Control type="password" placeholder="Password" />
+                </Form.Group>
+              </Form.Row>
+
+              <Button variant="primary" type="submit">
+                Submit
+              </Button>
             </Form>
           </div>
         </div>
