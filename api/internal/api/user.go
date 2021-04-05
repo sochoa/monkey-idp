@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/go-pg/pg/v10"
-	"github.com/go-pg/pg/v10/orm"
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
@@ -19,25 +17,6 @@ type User struct {
 	Emails       []string `json:"emails"`
 	PasswordHash string   `json:"-"`
 	Salt         string   `json:"-"`
-}
-
-func init() {
-	db := getDatabaseConnection()
-	defer db.Close()
-	createSchema(db)
-}
-
-func createSchema(db *pg.DB) error {
-	models := []interface{}{
-		(*User)(nil),
-	}
-	for _, model := range models {
-		err := db.Model(model).CreateTable(&orm.CreateTableOptions{})
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 func (u *User) String() string {
@@ -134,7 +113,7 @@ func listUsersHandler(w http.ResponseWriter, r *http.Request) {
 
 func addUserRoutes(router *mux.Router) {
 	subRouter := router.PathPrefix("/user").Subrouter()
-	subRouter.HandleFunc("/new", createUserhandler).Methods("POST").Queries(createUserRequiredArguments...)
-	subRouter.HandleFunc("/auth", authUserhandler).Methods("POST")
+	subRouter.HandleFunc("/create", createUserhandler).Methods("POST").Queries(createUserRequiredArguments...)
+	subRouter.HandleFunc("/authenticate", authUserhandler).Methods("POST")
 	router.PathPrefix("/users").Subrouter().HandleFunc("", listUsersHandler).Methods("GET")
 }
