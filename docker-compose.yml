@@ -1,4 +1,5 @@
 ---
+# Used during development, this file SHOULD NOT be used in production.
 version: "3.0"
 services:
   static:
@@ -19,7 +20,7 @@ services:
     volumes:
     - ./pg_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_PASSWORD: "1UABC/jNtmTsbXqe"
+      POSTGRES_PASSWORD: "changeme"
       POSTGRES_USER: "idp_user"
       POSTGRES_DB: "idp"
     container_name: idp_db
@@ -33,7 +34,7 @@ services:
     command: go run main.go
     working_dir: /src
     environment:
-      POSTGRES_PASSWORD: "1UABC/jNtmTsbXqe"
+      POSTGRES_PASSWORD: "changeme"
       POSTGRES_USER: "idp_user"
       POSTGRES_DB: "idp"
       HOST: "127.0.0.1"
