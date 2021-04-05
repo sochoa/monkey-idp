@@ -1,8 +1,10 @@
 package api
 
 import (
+	"fmt"
 	"github.com/go-pg/pg/v10"
 	"github.com/go-pg/pg/v10/orm"
+	"go.uber.org/zap"
 	"os"
 )
 
@@ -27,9 +29,15 @@ func createSchema(db *pg.DB) error {
 }
 
 func getDatabaseConnection() *pg.DB {
+	log, _ := zap.NewProduction()
+	defer log.Sync()
+	user := os.Getenv("POSTGRES_USER")
+	password := os.Getenv("POSTGRES_PASSWORD")
+	database := os.Getenv("POSTGRES_DB")
+	log.Info(fmt.Sprintf("user=%s, password=\"%s\", db=%s", user, password, database))
 	return pg.Connect(&pg.Options{
-		User:     os.Getenv("POSTGRES_USER"),
-		Password: os.Getenv("POSTGRES_PASSWORD"),
-		Database: os.Getenv("POSTGRES_DB"),
+		User:     user,
+		Password: password,
+		Database: database,
 	})
 }

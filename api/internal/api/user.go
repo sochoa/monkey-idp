@@ -11,16 +11,17 @@ import (
 )
 
 type User struct {
-	ID           string   `json:"id"`
-	FirstName    string   `json:"first_name"`
-	LastName     string   `json:"last_name"`
-	Emails       []string `json:"emails"`
-	PasswordHash string   `json:"-"`
-	Salt         string   `json:"-"`
+	UserID       string
+	Email        string
+	PasswordHash string `json:"-"`
+	Salt         string `json:"-"`
 }
 
 func (u *User) String() string {
-	if userBytes, err := json.Marshal(u); err == nil {
+	var userJson map[string]string = make(map[string]string)
+	userJson["userid"] = u.UserID
+	userJson["email"] = u.Email
+	if userBytes, err := json.Marshal(userJson); err == nil {
 		return string(userBytes)
 	} else {
 		return fmt.Sprintf("An error occured while serializing user to JSON: %v", err)
@@ -29,14 +30,12 @@ func (u *User) String() string {
 
 var (
 	createUserRequiredArguments []string = []string{
-		"id", "{id}",
-		"first", "{first}",
-		"last", "{last}",
+		"userid", "{userid}",
 		"email", "{email}",
 		"password", "{password}",
 	}
 	authUserRequiredArguments []string = []string{
-		"id", "{id}",
+		"userid", "{userid}",
 		"password", "{password}",
 	}
 )
@@ -54,39 +53,40 @@ func createUserhandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(msg))
 		return
 	}
-	user := User{
-		ID:           r.PostFormValue("id"),
-		FirstName:    r.PostFormValue("first"),
-		LastName:     r.PostFormValue("last"),
-		Emails:       []string{r.PostFormValue("email")},
+	user := &User{
+		UserID:       r.PostFormValue("userid"),
+		Email:        r.PostFormValue("email"),
 		PasswordHash: string(hash),
 	}
 
 	db := getDatabaseConnection()
 	defer db.Close()
-	db.Model(user).Insert()
-	log.Info("Created user", zap.String("user", user.String()))
+	if _, err := db.Model(user).Insert(); err != nil {
+		log.Error(fmt.Sprintf("An error occurred while inserting a user: user=%s.  Details:  %v", user.String(), err))
+	} else {
+		log.Info("Successfully created user", zap.String("user", user.String()))
+	}
 }
 
 func authUserhandler(w http.ResponseWriter, r *http.Request) {
 	log, _ := zap.NewProduction()
 	defer log.Sync()
-	user := User{ID: r.PostFormValue("id")}
+	user := User{UserID: r.PostFormValue("userid")}
 	db := getDatabaseConnection()
 	defer db.Close()
 	err := db.Model(&user).Select()
 	if err != nil {
-		log.Info("Does not exist", zap.String("user", user.ID))
+		log.Info("Does not exist", zap.String("user", user.UserID))
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 	passwordBytes := []byte(r.PostFormValue("password"))
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), passwordBytes); err != nil {
-		log.Info("Bad Password", zap.String("user", user.ID))
+		log.Info("Bad Password", zap.String("user", user.UserID))
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	log.Info("Successful Authentication", zap.String("user", user.ID))
+	log.Info("Successful Authentication", zap.String("user", user.UserID))
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -112,8 +112,15 @@ func listUsersHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func addUserRoutes(router *mux.Router) {
-	subRouter := router.PathPrefix("/user").Subrouter()
-	subRouter.HandleFunc("/create", createUserhandler).Methods("POST").Queries(createUserRequiredArguments...)
-	subRouter.HandleFunc("/authenticate", authUserhandler).Methods("POST")
-	router.PathPrefix("/users").Subrouter().HandleFunc("", listUsersHandler).Methods("GET")
+	log, _ := zap.NewProduction()
+	defer log.Sync()
+
+	log.Info("Adding /api/v1/user POST handler for creating users")
+	router.HandleFunc("/user", createUserhandler).Methods("POST").Queries(createUserRequiredArguments...)
+
+	log.Info("Adding /api/v1/authenticate POST handler for authenticating users")
+	router.HandleFunc("/authenticate", authUserhandler).Methods("POST")
+
+	log.Info("Adding /api/v1/users GET handler for listing users")
+	router.HandleFunc("/users", listUsersHandler).Methods("GET")
 }
