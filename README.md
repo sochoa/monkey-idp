@@ -18,3 +18,12 @@ it works, I'm going to get feedback on it to make it better.
 * The API users bcrypt.GenerateFromPassword() to store the salted hash of the user's password.  That's the best method I could find for storing passwords, for now. The purpose of this feature is to ensure that passwords are never stored in a manner that can be easily reverse engineered.
 
 __*Question*__:  Should we encrypt it also?
+
+## Next Steps
+
+* auth needs to work via API
+* sign-in and create-user should work from the UI
+* should add SSO registration and support
+* should add LDAP integration for back-end user directory
+* should add oauth support
+* should add API token request support with TTL
