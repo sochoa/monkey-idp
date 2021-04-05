@@ -11,15 +11,15 @@ chmod 0400 $PASSPHRASE_FILE
 openssl genrsa -aes256 -passout file:$PASSPHRASE_FILE -out $ROOT_CA_KEY 4096
 
 # Generate a root cert
-openssl req \
-  -x509 \
-  -passin file:$PASSPHRASE_FILE \
-  -new \
-  -nodes \
-  -key $ROOT_CA_KEY \
-  -sha256 \
-  -days 365 \
-  -subj '/CN=ca.local/O=Local Certifiate Authority/C=US' \
+openssl req                                         \
+  -x509                                             \
+  -passin file:$PASSPHRASE_FILE                     \
+  -new                                              \
+  -nodes                                            \
+  -key $ROOT_CA_KEY                                 \
+  -sha256                                           \
+  -days 365                                         \
+  -subj '/CN=ca.local/O=Local Certifiate Authority' \
   -out static/$ROOT_CERT
 
 (cd static; ln -sf $ROOT_CERT ca.crt)

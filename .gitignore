@@ -1,3 +1,6 @@
 pg_data
 **/*.key
 **/*.txt
+tmp
+static/*.srl
+static/*.crt

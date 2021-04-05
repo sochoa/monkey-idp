@@ -8,6 +8,7 @@ services:
     volumes:
     - ./nginx:/etc/nginx:ro
     - ./static:/usr/share/nginx/html:ro
+    - ./private:/usr/share/nginx/private:ro
     - ./logs/nginx:/var/log/nginx:rw
     command: [nginx]
 
