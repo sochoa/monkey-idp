@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Alert, Form, Col, Button, Modal } from 'react-bootstrap'
 
 export default function SignIn () {
-  const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal] = useState(false) /* eslint no-unused-vars: "off" */
   const [authResult, setAuthResult] = useState('')
   const [authStatus, setAuthStatus] = useState('success')
 
@@ -54,7 +54,7 @@ export default function SignIn () {
         </div>
       </div>
       <Modal
-        show={showModal}
+        show="{showModal}"
         size="lg"
         aria-labelledby="submit-modal-title"
         centered
