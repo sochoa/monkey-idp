@@ -1,8 +1,10 @@
 package api
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -68,21 +70,91 @@ func createUserhandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func authUserhandler(w http.ResponseWriter, r *http.Request) {
+func getRequestAsMap(r *http.Request) (map[string]interface{}, error) {
+
+	var (
+		parsedRequest    map[string]interface{} = make(map[string]interface{})
+		requestBodyJson  map[string]interface{} = make(map[string]interface{})
+		requestBodyBytes []byte                 = make([]byte, 0)
+		contentType      string                 = r.Header.Get("Content-Type")
+		err              error
+	)
+
 	log, _ := zap.NewProduction()
 	defer log.Sync()
-	user := User{UserID: r.PostFormValue("userid")}
-	db := getDatabaseConnection()
-	defer db.Close()
-	err := db.Model(&user).Select()
-	if err != nil {
-		log.Info("Does not exist", zap.String("user", user.UserID))
+
+	if r.Body != nil {
+		requestBodyBytes, _ = ioutil.ReadAll(r.Body)
+	}
+	r.Body = ioutil.NopCloser(bytes.NewBuffer(requestBodyBytes))
+
+	if contentType == "application/json" {
+		decoder := json.NewDecoder(r.Body)
+		if err := decoder.Decode(&requestBodyJson); err == nil {
+			for arg, val := range requestBodyJson {
+				parsedRequest[arg] = val
+				log.Info(fmt.Sprintf("JSON request body:  %v = %v", arg, val)) /* TODO:  remove password log */
+			}
+		}
+	} else if err = json.Unmarshal(requestBodyBytes, &requestBodyJson); err == nil {
+		for arg, val := range requestBodyJson {
+			log.Info(fmt.Sprintf("raw request body as JSON:  %v = %v", arg, val)) /* TODO:  remove password log */
+			parsedRequest[arg] = val
+		}
+	} else {
+		log.Error(fmt.Sprintf("An error occurred while unmarshalling the request to map[string]interface{}: %v", err))
+	}
+
+	log.Info(fmt.Sprintf("Request:  %v", parsedRequest)) /* TODO:  remove password log */
+	return parsedRequest, nil
+}
+
+func authUserhandler(w http.ResponseWriter, r *http.Request) {
+	var (
+		requestArgs map[string]interface{} = nil
+		password    string                 = ""
+		err         error                  = nil
+		user        User
+	)
+
+	log, _ := zap.NewProduction()
+	defer log.Sync()
+
+	if requestArgs, err = getRequestAsMap(r); err != nil {
+		log.Error(fmt.Sprintf("An error occurred while parsing the request arguments: %v", err))
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	passwordBytes := []byte(r.PostFormValue("password"))
+
+	if userId, ok := requestArgs["userid"]; ok {
+		user = User{UserID: userId.(string)}
+		log.Info(fmt.Sprintf("Parsed UserID:  %s", user.UserID))
+		db := getDatabaseConnection()
+		defer db.Close()
+		err := db.Model(&user).Select()
+		if err != nil {
+			log.Info("Does not exist", zap.String("user", user.UserID))
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+	} else {
+		log.Info(fmt.Sprintf("Could not find the userId in the request: %v", requestArgs))
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	if p, ok := requestArgs["password"]; ok {
+		password = p.(string)
+		log.Info(fmt.Sprintf("Parsed Password:  %v", password)) /* TODO:  remove password log */
+	} else {
+		log.Info(fmt.Sprintf("Could not find the password in the request: %v", requestArgs))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	passwordBytes := []byte(password)
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), passwordBytes); err != nil {
-		log.Info("Bad Password", zap.String("user", user.UserID))
+		log.Info("Bad Password", zap.String("user", user.UserID), zap.String("password", password)) /* TODO:  remove password log */
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -119,7 +191,7 @@ func addUserRoutes(router *mux.Router) {
 	router.HandleFunc("/user", createUserhandler).Methods("POST").Queries(createUserRequiredArguments...)
 
 	log.Info("Adding /api/v1/authenticate POST handler for authenticating users")
-	router.HandleFunc("/authenticate", authUserhandler).Methods("POST")
+	router.HandleFunc("/auth", authUserhandler).Methods("POST")
 
 	log.Info("Adding /api/v1/users GET handler for listing users")
 	router.HandleFunc("/users", listUsersHandler).Methods("GET")
