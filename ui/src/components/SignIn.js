@@ -1,22 +1,31 @@
-import React from 'react'
-import { Form, Col, Button } from 'react-bootstrap'
+import React, { useState } from 'react'
+import { Alert, Form, Col, Button, Modal } from 'react-bootstrap'
 
 export default function SignIn () {
-  const fields = {
-    userid: null,
-    password: null,
-    email: null
-  }
+  const [showModal, setShowModal] = useState(false)
+  const [authResult, setAuthResult] = useState('')
+  const [authStatus, setAuthStatus] = useState('success')
 
-  async function handleSubmit (event) {
+  function handleSubmit (event) {
     event.preventDefault()
-    fetch('/api/v1/user', {
+    fetch('/api/v1/auth', {
       method: 'POST',
-      body: JSON.stringify({}),
+      body: JSON.stringify({
+        password: document.querySelector('#password').value,
+        userid: document.querySelector('#userid').value
+      }),
       headers: { 'Content-Type': 'application/json' }
     })
-      .then(res => res.json())
-    // .then(json => setUser(json.user))
+      .then(function (response) {
+        if (response.ok) {
+          setAuthResult('Authorized!')
+          setAuthStatus('light')
+        } else {
+          setAuthResult('Unauthorized')
+          setAuthStatus('danger')
+        }
+        setShowModal(true)
+      })
   }
 
   return (
@@ -27,14 +36,14 @@ export default function SignIn () {
             <Form.Row>
               <Form.Group as={Col} controlId="userid" column lg="5">
                 <Form.Label>User ID</Form.Label>
-                <Form.Control autoFocus type="text" placeholder="Enter User ID" value={fields.userid} />
+                <Form.Control required autoFocus type="text" placeholder="Enter User ID" />
               </Form.Group>
             </Form.Row>
 
             <Form.Row>
               <Form.Group as={Col} controlId="password" column lg="5">
                 <Form.Label>Password</Form.Label>
-                <Form.Control type="password" placeholder="Password" />
+                <Form.Control required type="password" placeholder="Password" />
               </Form.Group>
             </Form.Row>
 
@@ -44,6 +53,24 @@ export default function SignIn () {
           </Form>
         </div>
       </div>
+      <Modal
+        show={showModal}
+        size="lg"
+        aria-labelledby="submit-modal-title"
+        centered
+      >
+        {/*
+        <Modal.Header>
+          <Modal.Title id="submit-modal-title">Authentication Result</Modal.Title>
+        </Modal.Header>
+        */}
+        <Modal.Body>
+          <p><Alert variant={authStatus}>{authResult}</Alert></p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={() => setShowModal(false)}>OK</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   )
 }
