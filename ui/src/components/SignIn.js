@@ -34,14 +34,14 @@ export default function SignIn () {
         <div className="col-md-12">
           <Form onSubmit={handleSubmit}>
             <Form.Row>
-              <Form.Group as={Col} controlId="userid" column lg="5">
+              <Form.Group as={Col} controlId="userid" lg="5">
                 <Form.Label>User ID</Form.Label>
                 <Form.Control required autoFocus type="text" placeholder="Enter User ID" />
               </Form.Group>
             </Form.Row>
 
             <Form.Row>
-              <Form.Group as={Col} controlId="password" column lg="5">
+              <Form.Group as={Col} controlId="password" lg="5">
                 <Form.Label>Password</Form.Label>
                 <Form.Control required type="password" placeholder="Password" />
               </Form.Group>
