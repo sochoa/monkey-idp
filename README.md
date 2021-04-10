@@ -24,9 +24,9 @@ __*Questions*__:
 ## Next Steps
 
 * the IDP needs a configuration UI
-* auth needs to work via API
-* sign-in and create-user should work from the UI
+* create-user should work from the UI
 * should add SSO registration and support for SAML 2.0
 * should add LDAP integration for back-end user directory
 * should add oauth support
 * should add API token request support with TTL
+* auth should set the auth cookie based on config
