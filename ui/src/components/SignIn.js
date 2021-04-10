@@ -54,7 +54,7 @@ export default function SignIn () {
         </div>
       </div>
       <Modal
-        show="{showModal}"
+        show={showModal}
         size="lg"
         aria-labelledby="submit-modal-title"
         centered
