@@ -59,11 +59,6 @@ export default function SignIn () {
         aria-labelledby="submit-modal-title"
         centered
       >
-        {/*
-        <Modal.Header>
-          <Modal.Title id="submit-modal-title">Authentication Result</Modal.Title>
-        </Modal.Header>
-        */}
         <Modal.Body>
           <p><Alert variant={authStatus}>{authResult}</Alert></p>
         </Modal.Body>
